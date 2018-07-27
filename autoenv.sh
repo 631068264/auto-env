@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
-
 auto_active(){
     _dir="$PWD"
     _env_path=$(find "$_dir" -maxdepth 2 -type d -name 'bin' -exec find {} -name 'activate' \; 2> /dev/null)
@@ -14,12 +11,14 @@ auto_active(){
             source $_env_path
         fi
     else
+        # when leave $VIRTUAL_ENV then deactivate
         if [[ -n "$VIRTUAL_ENV" &&  "$_dir" != $(dirname "$VIRTUAL_ENV")/* ]]
         then
             deactivate 2>/dev/null
         fi
     fi
 }
+
 
 auto_env(){
     env_cd()
@@ -35,7 +34,7 @@ auto_env(){
     cd() {
         env_cd "$@"
     }
-    cd .
+    cd "$PWD"
 }
 
 
