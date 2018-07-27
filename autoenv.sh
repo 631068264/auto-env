@@ -1,17 +1,12 @@
 #!/bin/bash
 
-get_env_path(){
-    _find_env_dir(){
-        result=$(find $1 -maxdepth 2 -type d -name 'bin' -exec find {} -name 'activate' \; 2> /dev/null)
-        echo ${result}
-    }
-    _dir="$PWD"
-    _env_path=$(_find_env_dir ${_dir})
-    echo $_env_path
-}
+#!/bin/bash
+
 
 auto_active(){
-    _env_path=$(get_env_path)
+    _dir="$PWD"
+    _env_path=$(find "$_dir" -maxdepth 2 -type d -name 'bin' -exec find {} -name 'activate' \; 2> /dev/null)
+
     if [[ -e "${_env_path}" ]]
     then
         # stop activate repeatedly
@@ -19,7 +14,7 @@ auto_active(){
             source $_env_path
         fi
     else
-        if [[ -n "$VIRTUAL_ENV" &&  "$PWD" != $(dirname "$VIRTUAL_ENV")/* ]]
+        if [[ -n "$VIRTUAL_ENV" &&  "$_dir" != $(dirname "$VIRTUAL_ENV")/* ]]
         then
             deactivate 2>/dev/null
         fi
@@ -27,7 +22,7 @@ auto_active(){
 }
 
 auto_env(){
-    autoenv_cd()
+    env_cd()
     {
       if builtin cd "$@"
       then
@@ -38,7 +33,7 @@ auto_env(){
       fi
     }
     cd() {
-        autoenv_cd "$@"
+        env_cd "$@"
     }
     cd .
 }
